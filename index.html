@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>VC+AlexBit</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 40px; background: #fff; color: #333; }
+    
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* Стиль кнопок */
+    .btn {
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 12px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 16px;
+      color: #333;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn:hover {
+      background: #ff4d4d;
+      color: #000;
+      border-color: #ff4d4d;
+    }
+
+    /* Подменю для ФРАКЦИЙ — кнопки внутри */
+    #fractions-submenu {
+      margin-top: 15px;
+      display: none;          /* по умолчанию скрыто */
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* Общий класс для информационных блоков (правила, фракции, разработчики) */
+    .info-block {
+      margin-top: 20px;
+      max-width: 500px;
+      display: none;
+    }
+
+    /* Блок правил */
+    #rules-block {
+      padding: 20px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+    }
+    #rules-block h4 { margin: 0 0 15px 0; color: #333; }
+    #rules-block ul { margin: 0; padding-left: 20px; }
+    #rules-block li { margin-bottom: 8px; line-height: 1.4; color: #444; }
+
+    /* Блок списка фракций */
+    #factions-list-block {
+      padding: 20px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+    }
+    #factions-list-block h4 { margin: 0 0 15px 0; color: #333; }
+    #factions-list-block .all-factions { font-size: 16px; color: #555; margin-bottom: 10px; line-height: 1.5; }
+    #factions-list-block .best-factions { color: #000; font-weight: bold; font-size: 17px; }
+
+    /* Блок разработчиков — без фона и рамки */
+    #devs-block { }
+    #devs-block h4 { margin: 0 0 10px 0; color: #333; }
+    #devs-block p { margin: 0; color: #000; font-size: 17px; line-height: 1.6; }
+
+    /* Форма анкеты */
+    #anketa-form {
+      display: none;
+      margin-top: 30px;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 10px;
+      max-width: 500px;
+    }
+    label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+    textarea { height: 80px; resize: vertical; }
+    .error-message {
+      color: #ff4d4d;
+      font-size: 14px;
+      text-align: center;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Верхняя панель: все кнопки в одну строку -->
+  <div class="top-bar">
+    <div class="btn-group">
+      <button class="btn" id="btn-anketa">АНКЕТА</button>
+      <button class="btn" id="btn-fractions">ФРАКЦИИ</button>
+      <a href="https://discord.gg/YyaygzJKy" target="_blank" rel="noopener noreferrer" class="btn">ДИСКОРД</a>
+      <a href="https://t.me/ssla_channel" target="_blank" rel="noopener noreferrer" class="btn">ТЕЛЕГРАМ</a>
+      <button class="btn" id="btn-devs">РАЗРАБОТЧИКИ</button>
+    </div>
+  </div>
+
+  <!-- Подменю для ФРАКЦИЙ (кнопки: Вступить, Правила, Список) -->
+  <div id="fractions-submenu">
+    <button class="btn" onclick="openAnketa()">Вступить во фракцию</button>
+    <button class="btn" id="btn-rules">Правила фракций</button>
+    <button class="btn" id="btn-factions-list">Список активных фракций</button>
+  </div>
+
+  <!-- Блоки информации -->
+  <div id="rules-block" class="info-block">
+    <h4>Правила фракций</h4>
+    <ul>
+      <li>Не конфликтовать.</li>
+      <li>Не материться.</li>
+      <li>Не грубить админам.</li>
+      <li>Не использовать фракции не по назначению.</li>
+      <li>Уважать других и быть добрым.</li>
+    </ul>
+  </div>
+
+  <div id="factions-list-block" class="info-block">
+    <h4>Активные фракции</h4>
+    <div class="all-factions">Все фракции: AURUM, U.R.U, CERBERUS, R.U.M</div>
+    <div class="best-factions">Лучшие фракции: AURUM, R.U.M</div>
+  </div>
+
+  <div id="devs-block" class="info-block">
+    <h4>Разработчики</h4>
+    <p>AlexBit<br>KvInTaKuV</p>
+  </div>
+
+  <!-- Форма анкеты -->
+  <div id="anketa-form">
+    <h3>Анкета для вступления во фракцию</h3>
+    <form id="anketa">
+      <div><label>Твой ник в Discord</label><input type="text" id="discord"></div>
+      <div><label>Цель вступления</label><textarea id="purpose"></textarea></div>
+      <div><label>Отношение к компании</label><textarea id="attitude"></textarea></div>
+      <div><label>Опыт в других фракциях</label>
+        <select id="experience"><option value="">Выберите</option><option value="yes">Да</option><option value="no">Нет</option></select>
+      </div>
+      <div><label>Активность</label><input type="text" id="activity"></div>
+      <div><label>Следить за каналами?</label>
+        <select id="channels"><option value="">Выберите</option><option value="yes">Да</option><option value="no">Нет</option></select>
+      </div>
+      <div><label>Работа в команде</label>
+        <select id="teamwork"><option value="">Выберите</option><option value="yes">Да</option><option value="sometimes">Иногда</option></select>
+      </div>
+      <div><label>Решение конфликта</label><textarea id="conflict"></textarea></div>
+      <div><label>Соблюдение правил</label>
+        <select id="rules"><option value="">Выберите</option><option value="yes">Да</option></select>
+      </div>
+      <div><label>Чем поможешь компании</label><textarea id="help"></textarea></div>
+      <div><label>Почему стоит выбрать тебя</label><textarea id="why"></textarea></div>
+      <div><label>Что ещё важно знать</label><textarea id="additional"></textarea></div>
+
+      <button type="submit" class="btn" style="width: 100%; margin-top: 15px;">Отправить анкету</button>
+      <div class="error-message" id="error-msg">Заполните обязательные поля</div>
+    </form>
+  </div>
+
+  <script>
+    // Элементы
+    const btnFractions = document.getElementById('btn-fractions');
+    const fractionsSubmenu = document.getElementById('fractions-submenu');
+    const anketaForm = document.getElementById('anketa-form');
+    const rulesBlock = document.getElementById('rules-block');
+    const factionsListBlock = document.getElementById('factions-list-block');
+    const devsBlock = document.getElementById('devs-block');
+    const errorMsg = document.getElementById('error-msg');
+
+    // Функция, которая скрывает ВСЕ информационные блоки и подменю
+    function resetAll() {
+      fractionsSubmenu.style.display = 'none';
+      rulesBlock.style.display = 'none';
+      factionsListBlock.style.display = 'none';
+      devsBlock.style.display = 'none';
+    }
+
+    // Кнопка «ФРАКЦИИ»: показывает подменю и скрывает всё остальное
+    btnFractions.onclick = () => {
+      if (anketaForm.style.display === 'block') {
+        anketaForm.style.display = 'none';
+      }
+      resetAll();              // убираем всё лишнее
+      fractionsSubmenu.style.display = 'flex'; // показываем подменю
+    };
+
+    // Функция открытия анкеты
+    function openAnketa() {
+      anketaForm.style.display = 'block';
+      resetAll();
+      errorMsg.style.display = 'none';
+    }
+
+    // Кнопка «АНКЕТА»
+    document.getElementById('btn-anketa').onclick = () => {
+      if (anketaForm.style.display === 'block') {
+        anketaForm.style.display = 'none';
+        fractionsSubmenu.style.display = 'flex';
+      } else {
+        openAnketa();
+      }
+    };
+
+    // Кнопка «Правила фракций» (внутри подменю)
+    document.getElementById('btn-rules').onclick = () => {
+      if (anketaForm.style.display === 'block') {
+        anketaForm.style.display = 'none';
+      }
+      resetAll();             // убираем подменю и блок разработчиков
+      rulesBlock.style.display = 'block';
+    };
+
+    // Кнопка «Список активных фракций» (внутри подменю)
+    document.getElementById('btn-factions-list').onclick = () => {
+      if (anketaForm.style.display === 'block') {
+        anketaForm.style.display = 'none';
+      }
+      resetAll();             // убираем подменю и блок разработчиков
+      factionsListBlock.style.display = 'block';
+    };
+
+    // Кнопка «РАЗРАБОТЧИКИ»: показывает только блок разработчиков, убирает подменю
+    document.getElementById('btn-devs').onclick = () => {
+      if (anketaForm.style.display === 'block') {
+        anketaForm.style.display = 'none';
+      }
+      resetAll();             // убирает и подменю, и правила, и список фракций
+      devsBlock.style.display = 'block'; // показывает только разработчиков
+    };
+
+    // Обработка отправки формы
+    document.getElementById('anketa').onsubmit = (e) => {
+      e.preventDefault();
+      const ids = ['discord','purpose','attitude','experience','activity','channels','teamwork','conflict','rules','help','why'];
+      let ok = true;
+      for (let id of ids) {
+        const el = document.getElementById(id);
+        if (el.tagName === 'SELECT' ? !el.value : !el.value.trim()) { 
+          ok = false; 
+          break; 
+        }
+      }
+      if (ok) { 
+        alert('Анкета отправлена! (Здесь будет отправка данных)');
+        document.getElementById('anketa').reset(); 
+      } else { 
+        errorMsg.style.display = 'block'; 
+      }
+    };
+  </script>
+</body>
+</html>
